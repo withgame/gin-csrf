@@ -7,8 +7,8 @@ import (
 	"io"
 
 	"github.com/dchest/uniuri"
+	"github.com/gin-gonic/contrib/sessions"
 	"github.com/gin-gonic/gin"
-	"github.com/tommy351/gin-sessions"
 )
 
 const (
@@ -87,7 +87,7 @@ func Middleware(options Options) gin.HandlerFunc {
 	}
 
 	return func(c *gin.Context) {
-		session := sessions.Get(c)
+		session := sessions.Default(c)
 		c.Set(csrfSecret, options.Secret)
 
 		if inArray(ignoreMethods, c.Request.Method) {
@@ -119,7 +119,7 @@ func Middleware(options Options) gin.HandlerFunc {
 
 // GetToken returns a CSRF token.
 func GetToken(c *gin.Context) string {
-	session := sessions.Get(c)
+	session := sessions.Default(c)
 	secret := c.MustGet(csrfSecret).(string)
 
 	if t, err := c.Get(csrfToken); err == nil {
