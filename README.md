@@ -16,9 +16,9 @@ $ go get github.com/utrack/gin-csrf
 import (
     "errors"
     
-    "github.com/gin-gonic/gin"
-    "github.com/gin-gonic/contrib/sessions"
+    "github.com/gin-contrib/sessions"
     "github.com/utrack/gin-csrf"
+    "gopkg.in/gin-gonic/gin.v1"
 )
 
 func main(){
