@@ -15,10 +15,10 @@ $ go get github.com/utrack/gin-csrf
 ``` go
 import (
     "errors"
-    
+
+	   "github.com/gin-gonic/gin"
     "github.com/gin-contrib/sessions"
     "github.com/utrack/gin-csrf"
-    "gopkg.in/gin-gonic/gin.v1"
 )
 
 func main(){
@@ -32,11 +32,11 @@ func main(){
 			c.Abort()
         },
     }))
-    
+
     r.GET("/protected", func(c *gin.Context){
         c.String(200, csrf.GetToken(c))
     })
-    
+
     r.POST("/protected", func(c *gin.Context){
         c.String(200, "CSRF token is valid")
     })

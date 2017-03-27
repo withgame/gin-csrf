@@ -8,7 +8,7 @@ import (
 
 	"github.com/dchest/uniuri"
 	"github.com/gin-contrib/sessions"
-	"gopkg.in/gin-gonic/gin.v1"
+	"github.com/gin-gonic/gin"
 )
 
 const (
