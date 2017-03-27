@@ -97,12 +97,14 @@ func Middleware(options Options) gin.HandlerFunc {
 
 		var salt string
 
-		if s, ok := session.Get(csrfSalt).(string); !ok || len(s) == 0 {
+		s, ok := session.Get(csrfSalt).(string)
+
+		if !ok || len(s) == 0 {
 			c.Next()
 			return
-		} else {
-			salt = s
 		}
+
+		salt = s
 
 		session.Delete(csrfSalt)
 
