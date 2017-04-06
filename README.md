@@ -16,7 +16,7 @@ $ go get github.com/utrack/gin-csrf
 import (
     "errors"
 
-	   "github.com/gin-gonic/gin"
+    "github.com/gin-gonic/gin"
     "github.com/gin-contrib/sessions"
     "github.com/utrack/gin-csrf"
 )
