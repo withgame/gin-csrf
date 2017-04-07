@@ -100,7 +100,7 @@ func Middleware(options Options) gin.HandlerFunc {
 		s, ok := session.Get(csrfSalt).(string)
 
 		if !ok || len(s) == 0 {
-			c.Next()
+			errorFunc(c)
 			return
 		}
 
