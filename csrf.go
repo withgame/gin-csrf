@@ -6,7 +6,6 @@ import (
 	"errors"
 	"io"
 
-	"github.com/Sirupsen/logrus"
 	"github.com/dchest/uniuri"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-gonic/gin"
@@ -96,21 +95,16 @@ func Middleware(options Options) gin.HandlerFunc {
 			return
 		}
 
-		var salt string
+		salt, ok := session.Get(csrfSalt).(string)
 
-		s, ok := session.Get(csrfSalt).(string)
-
-		if !ok || len(s) == 0 {
+		if !ok || len(salt) == 0 {
 			errorFunc(c)
 			return
 		}
 
-		salt = s
-
 		token := tokenGetter(c)
 
 		if tokenize(options.Secret, salt) != token {
-			logrus.Info(salt)
 			errorFunc(c)
 			return
 		}
