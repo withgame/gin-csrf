@@ -144,3 +144,24 @@ func GetToken(c *gin.Context) string {
 
 	return token
 }
+
+// RefreshToken returns a CSRF token.
+func RefreshToken(c *gin.Context) (old, new string) {
+	session := sessions.Default(c)
+	secret := c.MustGet(csrfSecret).(string)
+
+	if t, ok := c.Get(csrfToken); ok {
+		old = t.(string)
+	}
+
+	salt, ok := session.Get(csrfSalt).(string)
+	if !ok {
+		salt = uniuri.New()
+		session.Set(csrfSalt, salt)
+		session.Save()
+	}
+	new = tokenize(secret, salt)
+	c.Set(csrfToken, new)
+
+	return
+}
