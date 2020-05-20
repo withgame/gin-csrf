@@ -5,6 +5,7 @@ import (
 	"encoding/base64"
 	"errors"
 	"io"
+	"strings"
 
 	"github.com/dchest/uniuri"
 	"github.com/gin-contrib/sessions"
@@ -25,7 +26,6 @@ var defaultErrorFunc = func(c *gin.Context) {
 
 var defaultTokenGetter = func(c *gin.Context) string {
 	r := c.Request
-
 	if t := r.FormValue("_csrf"); len(t) > 0 {
 		return t
 	} else if t := r.URL.Query().Get("_csrf"); len(t) > 0 {
@@ -34,6 +34,8 @@ var defaultTokenGetter = func(c *gin.Context) string {
 		return t
 	} else if t := r.Header.Get("X-XSRF-TOKEN"); len(t) > 0 {
 		return t
+	} else if t, err := r.Cookie("_csrf"); err == nil {
+		return t.Value
 	}
 
 	return ""
@@ -43,6 +45,7 @@ var defaultTokenGetter = func(c *gin.Context) string {
 type Options struct {
 	Secret        string
 	IgnoreMethods []string
+	IgnorePaths   []string
 	ErrorFunc     gin.HandlerFunc
 	TokenGetter   func(c *gin.Context) string
 }
@@ -90,11 +93,19 @@ func Middleware(options Options) gin.HandlerFunc {
 		session := sessions.Default(c)
 		c.Set(csrfSecret, options.Secret)
 
+		if len(options.IgnorePaths) > 0 {
+			for _, p := range options.IgnorePaths {
+				if strings.Contains(c.FullPath(), p) {
+					c.Next()
+					return
+				}
+			}
+		}
+
 		if inArray(ignoreMethods, c.Request.Method) {
 			c.Next()
 			return
 		}
-
 		salt, ok := session.Get(csrfSalt).(string)
 
 		if !ok || len(salt) == 0 {
