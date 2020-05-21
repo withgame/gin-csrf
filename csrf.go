@@ -154,12 +154,10 @@ func RefreshToken(c *gin.Context) (old, new string) {
 		old = t.(string)
 	}
 
-	salt, ok := session.Get(csrfSalt).(string)
-	if !ok {
-		salt = uniuri.New()
-		session.Set(csrfSalt, salt)
-		session.Save()
-	}
+	salt := uniuri.New()
+	session.Set(csrfSalt, salt)
+	session.Save()
+
 	new = tokenize(secret, salt)
 	c.Set(csrfToken, new)
 
